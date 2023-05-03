@@ -1,0 +1,43 @@
+# https://docs.chain.link/chainlink-nodes/v1/running-a-chainlink-node
+# TODO: Pass in required secrets for Chainlink container
+# config validation failed: invalid secrets: 2 errors:
+# - Database.URL: empty: must be provided and non-empty
+# - Password.Keystore: empty: must be provided and non-empty
+apiVersion: v1
+kind: Pod
+metadata:
+  name: chainlink
+  namespace: socialmaven
+spec:
+  containers:
+  - name: chainlink
+    image: smartcontract/chainlink:2.0.0
+    ports:
+    - containerPort: 6688
+      name: chainlink
+    env:
+    - name: POSTGRES_USER
+      value: postgres
+    - name: POSTGRES_DB
+      value: chainlink_db
+    - name: POSTGRES_PASSWORD
+      value: postgres
+  - name: postgres
+    image: postgres:latest
+    ports: 
+    - containerPort: 5432 
+      name: postgresql
+    env:
+    - name: POSTGRES_USER
+      value: postgres
+    - name: POSTGRES_DB
+      value: chainlink_db
+    - name: POSTGRES_PASSWORD
+      value: postgres
+  #   volumeMounts:
+  #   - name: postgresql
+  #     mountPath: /var/lib/postgresql/data
+  # volumes:
+  #   - name: postgresql
+  #     persistentVolumeClaim:
+  #       claimName: postgres-claim
