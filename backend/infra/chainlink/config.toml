@@ -13,5 +13,5 @@ ChainID = '1'
 
 [[EVM.Nodes]]
 Name = 'Sepolia'
-WSURL = 'wss://geth'
-HTTPURL = 'https://geth'
+WSURL = 'wss://geth:8546'
+HTTPURL = 'https://geth:8545'

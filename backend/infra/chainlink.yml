@@ -1,8 +1,88 @@
 # https://docs.chain.link/chainlink-nodes/v1/running-a-chainlink-node
 # TODO: Pass in required secrets for Chainlink container
-# config validation failed: invalid secrets: 2 errors:
-# - Database.URL: empty: must be provided and non-empty
-# - Password.Keystore: empty: must be provided and non-empty
+
+# Something is wrong with the way I'm starting the Chainlink container, error -
+# Incorrect Usage: flag provided but not defined: -c
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: chainlink-secrets-toml
+  namespace: socialmaven
+type: Opaque
+stringData:
+  secrets.toml: |
+    [Password]
+    Keystore = 'postgres'
+    [Database]
+    URL = 'postgresql://postgres:postgres@geth.socialmaven.svc.cluster.local:5432/postgres?sslmode=disable'
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chainlink-configmap
+  namespace: socialmaven
+data:
+  ROOT: /chainlink
+  API_LOGIN: |
+    API_EMAIL
+    API_LOGIN
+  WALLET_PASSWORD: ""
+  # HTTP Security
+  ALLOW_ORIGINS: "*"
+  SECURE_COOKIES: "false"
+  CHAINLINK_PORT: "6688"
+  CHAINLINK_TLS_PORT: "0"
+  # Database
+  # DATABASE_TIMEOUT: "0"
+  DATABASE_URL: postgresql://postgres:postgres@chainlink.socialmaven.svc.cluster.local:5432/postgres?sslmode=disable
+  # Ethereum
+  ETH_URL: ws://geth:8546
+  ETH_CHAIN_ID: "1"
+  LINK_CONTRACT_ADDRESS: 0x514910771af9ca656af840dff83e8264ecf986ca
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chainlink-secrets-toml
+  namespace: socialmaven
+data:
+  # Database
+  # DATABASE_TIMEOUT: "0"
+  DATABASE_URL: postgresql://postgres:postgres@chainlink.socialmaven.svc.cluster.local:5432/postgres?sslmode=disable
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chainlink-config-toml
+  namespace: socialmaven
+data:
+  config.toml: |
+    [Log]
+    Level = 'warn'
+
+    [WebServer]
+    AllowOrigins = '*'
+    SecureCookies = false
+
+    [WebServer.TLS]
+    HTTPSPort = 0
+
+    [[EVM]]
+    ChainID = '1'
+
+    [[EVM.Nodes]]
+    Name = 'Sepolia'
+    WSURL = 'wss://geth:8546'
+    HTTPURL = 'https://geth:8545'
+
+
+---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -12,16 +92,20 @@ spec:
   containers:
   - name: chainlink
     image: smartcontract/chainlink:2.0.0
+    
     ports:
     - containerPort: 6688
       name: chainlink
-    env:
-    - name: POSTGRES_USER
-      value: postgres
-    - name: POSTGRES_DB
-      value: chainlink_db
-    - name: POSTGRES_PASSWORD
-      value: postgres
+    command: ["chainlink", "local", "node"]
+    args: ["-a", "/etc/chainlink/api", "-p", "/etc/chainlink/password", "-c", "/etc/chainlink/config/config.toml", "-s", "/etc/chainlink/secrets/secrets.toml"]
+    volumeMounts:
+    - name: config
+      mountPath: /etc/chainlink
+    - name: config-toml
+      mountPath: /etc/chainlink/config
+    - name: secrets-toml
+      mountPath: /etc/chainlink/secrets
+
   - name: postgres
     image: postgres:latest
     ports: 
@@ -34,10 +118,25 @@ spec:
       value: chainlink_db
     - name: POSTGRES_PASSWORD
       value: postgres
-  #   volumeMounts:
-  #   - name: postgresql
-  #     mountPath: /var/lib/postgresql/data
-  # volumes:
-  #   - name: postgresql
-  #     persistentVolumeClaim:
-  #       claimName: postgres-claim
+
+  volumes:
+  - name: config
+    configMap:
+      name: chainlink-configmap
+      items:
+      - key: API_LOGIN
+        path: api
+      - key: WALLET_PASSWORD
+        path: password
+  - name: config-toml
+    configMap:
+      name: chainlink-config-toml
+      items:
+      - key: config.toml
+        path: value
+  - name: secrets-toml
+    secret:
+      secretName: chainlink-secrets-toml
+      items:
+      - key: secrets.toml
+        path: value
