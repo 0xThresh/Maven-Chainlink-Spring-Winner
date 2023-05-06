@@ -1,8 +1,5 @@
 # https://docs.chain.link/chainlink-nodes/v1/running-a-chainlink-node
-# TODO: Pass in required secrets for Chainlink container
-
-# Something is wrong with the way I'm starting the Chainlink container, error -
-# Incorrect Usage: flag provided but not defined: -c
+# TODO: Pass in required secrets for Chainlink container safely
 
 ---
 apiVersion: v1
@@ -14,46 +11,21 @@ type: Opaque
 stringData:
   secrets.toml: |
     [Password]
-    Keystore = 'postgres'
+    Keystore = 'POSTGR3S123456789!'
     [Database]
-    URL = 'postgresql://postgres:postgres@geth.socialmaven.svc.cluster.local:5432/postgres?sslmode=disable'
+    URL = 'postgresql://postgres:POSTGR3S123456789!@localhost:5432/chainlink_db?sslmode=disable'
 ---
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
   name: chainlink-configmap
   namespace: socialmaven
-data:
-  ROOT: /chainlink
+type: Opaque
+stringData:
+  #ROOT: /chainlink
   API_LOGIN: |
-    API_EMAIL
-    API_LOGIN
-  WALLET_PASSWORD: ""
-  # HTTP Security
-  ALLOW_ORIGINS: "*"
-  SECURE_COOKIES: "false"
-  CHAINLINK_PORT: "6688"
-  CHAINLINK_TLS_PORT: "0"
-  # Database
-  # DATABASE_TIMEOUT: "0"
-  DATABASE_URL: postgresql://postgres:postgres@chainlink.socialmaven.svc.cluster.local:5432/postgres?sslmode=disable
-  # Ethereum
-  ETH_URL: ws://geth:8546
-  ETH_CHAIN_ID: "1"
-  LINK_CONTRACT_ADDRESS: 0x514910771af9ca656af840dff83e8264ecf986ca
-
----
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: chainlink-secrets-toml
-  namespace: socialmaven
-data:
-  # Database
-  # DATABASE_TIMEOUT: "0"
-  DATABASE_URL: postgresql://postgres:postgres@chainlink.socialmaven.svc.cluster.local:5432/postgres?sslmode=disable
-
+    x@y.z
+    POSTGR3S123456789!
 
 ---
 apiVersion: v1
@@ -89,15 +61,18 @@ metadata:
   name: chainlink
   namespace: socialmaven
 spec:
+  #restartPolicy: Never
   containers:
   - name: chainlink
     image: smartcontract/chainlink:2.0.0
-    
+    imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 6688
       name: chainlink
-    command: ["chainlink", "local", "node"]
-    args: ["-a", "/etc/chainlink/api", "-p", "/etc/chainlink/password", "-c", "/etc/chainlink/config/config.toml", "-s", "/etc/chainlink/secrets/secrets.toml"]
+    # command: ["/bin/sh"]
+    # args: ["-c", "for i in $(seq 1 10); do echo 'Alive!'; sleep 1000; done"]
+    command: ["chainlink", "node"]
+    args: ["-config", "/etc/chainlink/config/config.toml", "-secrets", "/etc/chainlink/secrets/secrets.toml", "start"]
     volumeMounts:
     - name: config
       mountPath: /etc/chainlink
@@ -117,7 +92,7 @@ spec:
     - name: POSTGRES_DB
       value: chainlink_db
     - name: POSTGRES_PASSWORD
-      value: postgres
+      value: POSTGR3S123456789!
 
   volumes:
   - name: config
@@ -126,17 +101,15 @@ spec:
       items:
       - key: API_LOGIN
         path: api
-      - key: WALLET_PASSWORD
-        path: password
   - name: config-toml
     configMap:
       name: chainlink-config-toml
       items:
       - key: config.toml
-        path: value
+        path: config.toml
   - name: secrets-toml
     secret:
       secretName: chainlink-secrets-toml
       items:
       - key: secrets.toml
-        path: value
+        path: secrets.toml
