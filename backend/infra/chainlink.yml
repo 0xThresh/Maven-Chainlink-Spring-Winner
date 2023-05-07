@@ -1,6 +1,4 @@
-# https://docs.chain.link/chainlink-nodes/v1/running-a-chainlink-node
 # TODO: Pass in required secrets for Chainlink container safely
-
 ---
 apiVersion: v1
 kind: Secret
@@ -22,11 +20,9 @@ metadata:
   namespace: socialmaven
 type: Opaque
 stringData:
-  #ROOT: /chainlink
   API_LOGIN: |
     x@y.z
     POSTGR3S123456789!
-
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -52,8 +48,6 @@ data:
     Name = 'Sepolia'
     WSURL = 'wss://geth:8546'
     HTTPURL = 'https://geth:8545'
-
-
 ---
 apiVersion: v1
 kind: Pod
@@ -61,7 +55,6 @@ metadata:
   name: chainlink
   namespace: socialmaven
 spec:
-  #restartPolicy: Never
   containers:
   - name: chainlink
     image: smartcontract/chainlink:2.0.0
@@ -69,10 +62,8 @@ spec:
     ports:
     - containerPort: 6688
       name: chainlink
-    # command: ["/bin/sh"]
-    # args: ["-c", "for i in $(seq 1 10); do echo 'Alive!'; sleep 1000; done"]
     command: ["chainlink", "node"]
-    args: ["-config", "/etc/chainlink/config/config.toml", "-secrets", "/etc/chainlink/secrets/secrets.toml", "start"]
+    args: ["-config", "/etc/chainlink/config/config.toml", "-secrets", "/etc/chainlink/secrets/secrets.toml", "start", "-api", "/etc/chainlink/api"]
     volumeMounts:
     - name: config
       mountPath: /etc/chainlink
@@ -80,7 +71,6 @@ spec:
       mountPath: /etc/chainlink/config
     - name: secrets-toml
       mountPath: /etc/chainlink/secrets
-
   - name: postgres
     image: postgres:latest
     ports: 
@@ -93,7 +83,6 @@ spec:
       value: chainlink_db
     - name: POSTGRES_PASSWORD
       value: POSTGR3S123456789!
-
   volumes:
   - name: config
     configMap:
