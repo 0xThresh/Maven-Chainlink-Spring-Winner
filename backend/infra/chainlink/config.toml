@@ -1,0 +1,17 @@
+[Log]
+Level = 'warn'
+
+[WebServer]
+AllowOrigins = '*'
+SecureCookies = false
+
+[WebServer.TLS]
+HTTPSPort = 0
+
+[[EVM]]
+ChainID = '1'
+
+[[EVM.Nodes]]
+Name = 'Sepolia'
+WSURL = 'wss://geth:8546'
+HTTPURL = 'https://geth:8545'
