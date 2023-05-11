@@ -1,0 +1,67 @@
+{
+    id: '0x8be0',
+    name: 'distorted.eth',
+    bio: 'blockchain and art enthusiast ',
+    attributes: [
+      {
+        displayType: null,
+        traitType: 'string',
+        key: 'twitter',
+        value: 'distorted_eth',
+        __typename: 'Attribute'
+      },
+      {
+        displayType: null,
+        traitType: 'boolean',
+        key: 'hasPrideLogo',
+        value: 'true',
+        __typename: 'Attribute'
+      },
+      {
+        displayType: null,
+        traitType: 'string',
+        key: 'app',
+        value: 'Lenster',
+        __typename: 'Attribute'
+      }
+    ],
+    isFollowedByMe: false,
+    isFollowing: false,
+    followNftAddress: '0xfA5c400BDA21aD45E52e0ba8DB07FD65afEc2Ee8',
+    metadata: 'https://arweave.net/bEye1ysfM1R1ZQMIfXlTK6nFIbuNqcUFU54pGrzaSjo',
+    isDefault: true,
+    handle: 'distorted.lens',
+    picture: {
+      contractAddress: '0xC784e2D033B3cf2E5cb283F4aa4f9B903436b0Af',
+      tokenId: '92',
+      uri: 'https://statics-polygon-lens.s3.eu-west-1.amazonaws.com/profile/nft-0x46295302252aD1fE561B35542669BA8fEA22Cfcc_eth_0xC784e2D033B3cf2E5cb283F4aa4f9B903436b0Af_92.png',
+      verified: true,
+      __typename: 'NftImage'
+    },
+    coverPicture: null,
+    ownedBy: '0xc2b60CfFe4f20b2046C951CDEB459aF897cff571',
+    dispatcher: null,
+    stats: {
+      totalFollowers: 4,
+      totalFollowing: 0,
+      totalPosts: 3,
+      totalComments: 0,
+      totalMirrors: 1,
+      totalPublications: 4,
+      totalCollects: 0,
+      __typename: 'ProfileStats'
+    },
+    followModule: null,
+    onChainIdentity: {
+      ens: { name: null, __typename: 'EnsOnChainIdentity' },
+      proofOfHumanity: false,
+      sybilDotOrg: {
+        verified: false,
+        source: [Object],
+        __typename: 'SybilDotOrgIdentity'
+      },
+      worldcoin: { isHuman: false, __typename: 'WorldcoinIdentity' },
+      __typename: 'OnChainIdentity'
+    },
+    __typename: 'Profile'
+  }

@@ -1,0 +1,8 @@
+[
+  {
+    "request": {},
+    "expectedResponse": {
+      "result": { "greaterThan": 0 }
+    }
+  }
+]
