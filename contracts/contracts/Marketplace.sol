@@ -13,7 +13,8 @@ contract Marketplace {
         bool isDealCancelled;
         bool isDealDone;
         string lensProfileId;
-        uint256 numberOfPosts;
+        uint256 numberOfAgencyPosts;
+        uint256 postsBeforeContract;
     }
 
     function startDeal(address _agency, uint256 _amount) external payable {
@@ -35,6 +36,8 @@ contract Marketplace {
     function checkProfilePosts(string memory _lensProfileId) {
     // Description of how to write Chainlink function in Solidity 
     // https://docs.chain.link/chainlink-nodes/external-adapters/contract-creators
+    // Chainlink.Request memory req = buildChainlinkRequest(SPEC_ID, this, this.fulfill.selector);
+    // req.add("endpoint", "totalPosts");
     }
 
 }
