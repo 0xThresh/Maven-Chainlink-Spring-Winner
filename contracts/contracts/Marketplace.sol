@@ -12,6 +12,7 @@ contract Marketplace {
         bool startDeal;
         bool isDealCancelled;
         bool isDealDone;
+        string lensProfileId;
         uint256 numberOfPosts;
     }
 
@@ -29,6 +30,11 @@ contract Marketplace {
 
     function checkAgencyReputation(address _agency) external {
 
+    }
+    
+    function checkProfilePosts(string memory _lensProfileId) {
+    // Description of how to write Chainlink function in Solidity 
+    // https://docs.chain.link/chainlink-nodes/external-adapters/contract-creators
     }
 
 }
