@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.btn-primary {
+  @apply flex items-center justify-center bg-slate-800 text-white
+}
+.btn-primary-color-changing {
+  @apply flex items-center justify-center bg-slate-800 text-white hover:text-slate-800 hover:bg-white hover:border-[1px] hover:border-slate-800 transition-colors duration-300
+}
+.btn-secondary {
+  @apply flex items-center justify-center border-[1px] border-slate-800 bg-bgColor
+}
+.btn-secondary-color-changing {
+  @apply flex items-center justify-center border-[1px] border-slate-800 bg-bgColor hover:bg-slate-800 hover:text-white duration-300 transition-colors
+}

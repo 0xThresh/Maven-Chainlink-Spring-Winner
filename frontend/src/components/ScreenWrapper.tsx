@@ -1,5 +1,3 @@
-import React from 'react'
-
 const ScreenWrapper = ({children}:{children:any}) => {
     return (
         <main
