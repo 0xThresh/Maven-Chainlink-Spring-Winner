@@ -2,8 +2,6 @@ import process from "process";
 import express, { Express, Request, Response} from "express";
 import bodyParser from "body-parser";
 import { profile } from "../../lens-api/get-lens-profile"
-// TODO: Import .env values or set them as env vars in the Chainlink node
-
 
 type EAInput = {
     id: number | string;
