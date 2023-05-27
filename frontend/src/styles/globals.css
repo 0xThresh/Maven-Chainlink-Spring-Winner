@@ -14,3 +14,14 @@
 .btn-secondary-color-changing {
   @apply flex items-center justify-center border-[1px] border-slate-800 bg-bgColor hover:bg-slate-800 hover:text-white duration-300 transition-colors
 }
+@keyframes agency-form-animate {
+  0% {
+    height: 0px;
+  }
+  100% {
+    height: 384px;
+  }
+}
+.animate-height-agency-form {
+  animation: agency-form-animate 500ms ease;
+}

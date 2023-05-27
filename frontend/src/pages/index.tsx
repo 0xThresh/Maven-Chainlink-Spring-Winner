@@ -1,38 +1,24 @@
-import { Inter } from 'next/font/google'
-import ScreenWrapper from '@/components/ScreenWrapper'
-import { useRouter } from 'next/router'
+import { Inter } from "next/font/google";
+import ScreenWrapper from "@/components/ScreenWrapper";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const router = useRouter()
-  const connectWallet = async () => {}
-
-  const handleSignIn = async (userType: "agency" | "user") => {
-    try {
-      await connectWallet()
-
-      if(userType === "agency") {
-        router.push("/agency/signin")
-      } else {
-        router.push("/user/signin")
-      }
-    } catch (err) {
-      console.log(err)
-    }
-  }
+  const router = useRouter();
 
   return (
     <ScreenWrapper>
-      <div className='w-3/12 flex justify-between'>
-        <button className=' btn-primary-color-changing py-2 px-4 w-40 text-lg rounded-[26px]' onClick={() => handleSignIn("agency")}>
+      <div className="w-3/12 flex justify-between">
+        <Link href={"/agency/signin"} className="btn-primary-color-changing py-2 px-4 w-40 text-lg rounded-[26px]">
           Agency Login
-        </button>
+        </Link>
 
-        <button className='btn-secondary-color-changing py-2 px-4 w-40 text-lg  rounded-[26px]' onClick={() => handleSignIn("user")}>
+        <Link href={"/user/signin"} className="btn-secondary-color-changing py-2 px-4 w-40 text-lg  rounded-[26px]">
           User Login
-        </button>  
+        </Link>  
       </div>
     </ScreenWrapper>
-  )
+  );
 }
