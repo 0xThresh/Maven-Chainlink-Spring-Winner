@@ -1,7 +1,7 @@
-import ProfilesNavigation from '@/components/Navigations'
 import React from 'react'
+import ProfilesNavigation from '@/components/Navigations'
 
-const Dashboard = () => {
+const AgencyDashboard = () => {
   return (
     <div className='h-full w-full'>
       <div className='h-20 w-full'>
@@ -12,11 +12,11 @@ const Dashboard = () => {
           {/** sidebar */}
         </div>
         <div className='h-full w-9/12'>
-          <ProfilesNavigation isUserDashboard/>
+          <ProfilesNavigation/>
         </div>
       </div>
     </div>
   )
 }
 
-export default Dashboard
+export default AgencyDashboard
