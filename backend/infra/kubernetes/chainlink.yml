@@ -4,7 +4,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: chainlink-secrets-toml
-  namespace: socialmaven
+  #namespace: socialmaven
 type: Opaque
 stringData:
   secrets.toml: |
@@ -17,7 +17,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: chainlink-configmap
-  namespace: socialmaven
+  #namespace: socialmaven
 type: Opaque
 stringData:
   API_LOGIN: |
@@ -28,7 +28,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: chainlink-config-toml
-  namespace: socialmaven
+  #namespace: socialmaven
 data:
   config.toml: |
     [Log]
@@ -53,7 +53,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: chainlink
-  namespace: socialmaven
+  #namespace: socialmaven
 spec:
   containers:
   - name: chainlink
@@ -83,6 +83,9 @@ spec:
       value: chainlink_db
     - name: POSTGRES_PASSWORD
       value: POSTGR3S123456789!
+  tolerations:
+  - key: ""
+    operator: "Exists"
   volumes:
   - name: config
     configMap:
