@@ -38,9 +38,11 @@ const Dashboard = () => {
             <div className='w-8/12 bg-white self-start pb-4 border-2 border-gray-500'>
               <h3 className='w-full px-4 py-2 bg-slate-100 border-b-2 border-gray-500'>Agencies</h3>
               <div className='w-full flex flex-col items-center mt-4'>
-                <AgencyInfo name='RandomAgency' image='/hh' timeLeft='4'/>
-                <AgencyInfo name='RandomAgency' image='/hh' timeLeft='18'/>
-                <AgencyInfo name='RandomAgency' image='/hh' timeLeft='25'/>
+
+                <AgencyInfo name='RandomAgency' image='/hh' timeLeft='30'/>
+                <AgencyInfo name='RandomAgency' image='/hh' timeLeft='5'/>
+                <AgencyInfo name='RandomAgency' image='/hh' timeLeft='30'/>
+
               </div>
             </div>
             <div className='w-3/12 bg-white self-start pb-4 border-2 border-gray-500'>

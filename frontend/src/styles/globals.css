@@ -13,13 +13,19 @@ progress {
     border-radius: 20px;
 }
 
-progress[value^="2"]::-webkit-progress-value {
+
+progress[value]::-webkit-progress-value {
     background-color:rgb(0, 204, 61);
       border-radius: 20px;
 }
 
-progress[value^="14"]::-webkit-progress-value {
+progress[value^="4"]::-webkit-progress-value {
     background-color: rgb(211, 198, 9);
+}
+
+
+progress[value^="12"]::-webkit-progress-value {
+    background-color: rgb(204, 255, 0);
 }
 
 progress[value^="22"]::-webkit-progress-value {
