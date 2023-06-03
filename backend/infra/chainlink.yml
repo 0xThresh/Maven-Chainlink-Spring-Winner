@@ -42,10 +42,10 @@ data:
     HTTPSPort = 0
 
     [[EVM]]
-    ChainID = '1'
+    ChainID = '80001'
 
     [[EVM.Nodes]]
-    Name = 'Sepolia'
+    Name = 'Mumbai'
     WSURL = 'wss://geth:8546'
     HTTPURL = 'https://geth:8545'
 ---
