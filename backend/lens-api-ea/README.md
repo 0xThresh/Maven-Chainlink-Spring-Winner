@@ -6,6 +6,7 @@ Chainlink External Adapter that can be used to query the Lens API for decisions 
 2. If required, install and set up Docker: https://www.docker.com/get-started/
 3. Run `docker build . -t lens-ea` - this will build the required image locally, tagged as `lens-ea` 
 4. Run `docker run -dit -p 8080:8080 --name lens-ea --env-file ./.env lens-ea` - this will start the container and allow it to accept requests on http://localhost:8080
+- If running on ARM to build on AMD for EC2: `docker buildx build --platform=linux/amd64 -t lens-ea .`
 5. Test the container is working correctly using the commands in the Request Data section below
 
 ## Manual Setup

@@ -209,3 +209,13 @@ output "aws_auth_configmap_yaml" {
   description = "Formatted yaml output for base aws-auth configmap containing roles used in cluster node groups/fargate profiles"
   value       = module.eks.aws_auth_configmap_yaml
 }
+
+output "rds_instance_name" {
+  description = "Name of RDS database"
+  value       = aws_db_instance.chainlink.db_name
+}
+
+output "rds_instance_endpoint" { 
+  description = "Endpoint of RDS instance"
+  value       = aws_db_instance.chainlink.endpoint
+}

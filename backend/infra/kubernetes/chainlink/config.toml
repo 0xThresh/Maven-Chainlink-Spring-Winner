@@ -9,7 +9,7 @@ SecureCookies = false
 HTTPSPort = 0
 
 [[EVM]]
-ChainID = '1'
+ChainID = '80001'
 
 [[EVM.Nodes]]
 Name = 'Mumbai'
