@@ -4,7 +4,8 @@
 
 .btn-primary {
   @apply flex items-center justify-center bg-slate-800 text-white
-    
+}
+
 body {
     background-color: #E9E8E4;
 }
