@@ -1,6 +1,6 @@
 const DashboardSideBar = () => {
   return (
-    <div className=" w-72 bg-bgColor h-[90vh] border-r-2 border-[#2A2538] flex flex-col mt-20">
+    <div className=" w-72 bg-bgColor h-[92vh] border-r-2 border-[#2A2538] flex flex-col">
       <div className=" border-b-2 border-[#91ACB0] pl-6 py-3 text-xl cursor-pointer  flex items-center">
         <img src="/assets/smileySideNavBar.svg" alt="" className='h-18 w-18 mr-3' />
         Clients
