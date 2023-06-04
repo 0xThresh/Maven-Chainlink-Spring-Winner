@@ -20,7 +20,7 @@ contract SocialMaven is ChainlinkClient, ConfirmedOwner {
     constructor(address _linkTokenAddress, address _oracleAddress) ConfirmedOwner(msg.sender) {
        setChainlinkToken(_linkTokenAddress);
        setChainlinkOracle(_oracleAddress);
-       jobId = ""; // TODO: Plug in Job ID when deployed to Chainlink node 
+       jobId = "3a5f73c2-4134-428d-853d-033380dcf0f1"; // TODO: Plug in Job ID when deployed to Chainlink node 
        fee = (1 * LINK_DIVISIBILITY) / 10; // 0,1 * 10**18 (Varies by network and job)
     }
 

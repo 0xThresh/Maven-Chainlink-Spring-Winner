@@ -1,6 +1,6 @@
 type = "directrequest"
 schemaVersion = 1
-name = "Lens-Profile-EA"  
+name = "lens-ea"  
 maxTaskDuration = "0s"
 contractAddress =  "0x93e27DAc3b1Aa29CE76F75901b77D1C1758dDB9f"
 minContractPaymentLinkJuels = "0"
@@ -11,7 +11,7 @@ observationSource = """
                   topics="$(jobRun.logTopics)"]
 
     decode_cbor  [type=cborparse data="$(decode_log.data)"]
-    fetch        [type=bridge name="LensEATest" requestData="{\\"id\\": $(jobSpec.externalJobID), \\"data\\": { \\"number\\": $(decode_cbor.number) , \\"infoType\\": $(decode_cbor.infoType)}}"]
+    fetch        [type=bridge name="lens-ea" requestData="{\\"id\\": $(jobSpec.externalJobID), \\"data\\": { \\"number\\": $(decode_cbor.number) , \\"infoType\\": $(decode_cbor.infoType)}}"]
     parse        [type=jsonparse path="data,result" data="$(fetch)"]
     encode_data  [type=ethabiencode abi="(bytes32 requestId,string info)" data="{\\"requestId\\": $(decode_log.requestId),\\"info\\": $(parse) }"]
     encode_tx    [type=ethabiencode
