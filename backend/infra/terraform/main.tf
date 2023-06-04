@@ -1,15 +1,61 @@
 data "aws_availability_zones" "available" {}
+data "aws_caller_identity" "current" {}
+data "aws_eks_cluster_auth" "this" {
+  name = module.eks.cluster_name
+}
 
 locals {
   cluster_name            = "chainlink-cluster"
   cluster_version = "1.25"
+  namespace = "default"
   region          = "us-west-2"
 
   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
 
   tags = {
-    app    = "cf"
+    app    = "maven"
   }
+
+  secrets = [
+    "pk",
+    "mumbai-rpc-url",
+    "lens-api",
+    "lens-hub-contract",
+    "lens-periphery-contract",
+    "api-login-username",
+    "api-login-password",
+    "quicknode-wss-url",
+    "quicknode-http-url",
+    "postgres-username",
+    "postgres-password"
+  ]
+
+  cluster_secretstore_name = "cluster-secretstore-sm"
+  cluster_secretstore_sa   = "cluster-secretstore-sa"
+  secretstore_name         = "secretstore-ps"
+  secretstore_sa           = "secretstore-sa"
+}
+
+# Secrets
+resource "aws_secretsmanager_secret" "secrets" {
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  for_each = toset(local.secrets)
+  name = each.value
+  kms_key_id              = aws_kms_key.secrets.arn
+}
+
+resource "aws_secretsmanager_secret_version" "secret" {
+  lifecycle {
+    ignore_changes = [secret_string]
+  }
+  for_each = aws_secretsmanager_secret.secrets
+  secret_id = each.value.id
+  secret_string = jsonencode({
+    value = ""
+  })
 }
 
 # VPC
@@ -55,6 +101,7 @@ module "eks" {
   vpc_id                         = module.vpc.vpc_id
   subnet_ids                     = module.vpc.private_subnets
   cluster_endpoint_public_access = true
+
 
   eks_managed_node_group_defaults = {
     ami_type = "AL2_x86_64"
@@ -200,6 +247,7 @@ resource "aws_security_group" "chainlink-db-sg" {
 }
 
 # Build Docker image locally
+# TODO: Put this into Codebuild to prevent any further arch issues
 resource "null_resource" "build_docker_image" {
   provisioner "local-exec" {
     command = "docker buildx build --platform=linux/amd64 -t lens-ea ../../lens-api-ea"
@@ -215,7 +263,11 @@ resource "aws_ecr_repository" "chainlink_ecr" {
     encryption_type = "AES256"
   }
 
-  force_delete = true
+  force_delete = false
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Push Docker image to ECR repository using local_exec provisioner
@@ -251,7 +303,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: chainlink-node
-  #namespace: socialmaven
+  namespace: ${local.namespace}
+  labels:
+    app: chainlink-node
 spec:
   containers:
   - name: chainlink
@@ -302,11 +356,40 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: lens-api-ea
+  namespace: ${local.namespace}
+  labels:
+    app: lens-api-ea
 spec:
   containers:
   - name: lens-api-ea
     image: ${aws_ecr_repository.chainlink_ecr.repository_url}:latest
     imagePullPolicy: IfNotPresent
+    env:
+    - name: PK
+      valueFrom:
+        secretKeyRef: 
+          name: pk
+          key: value
+    - name: LENS_API
+      valueFrom:
+        secretKeyRef: 
+          name: lens-api
+          key: value
+    - name: LENS_HUB_CONTRACT
+      valueFrom:
+        secretKeyRef: 
+          name: lens-hub-contract
+          key: value
+    - name: LENS_PERIPHERY_CONTRACT
+      valueFrom:
+        secretKeyRef: 
+          name: lens-periphery-contract
+          key: value
+    - name: MUMBAI_RPC_URL
+      valueFrom:
+        secretKeyRef: 
+          name: mumbai-rpc-url
+          key: value
     ports:
     - containerPort: 8080
       name: lens-api-ea
@@ -314,12 +397,14 @@ spec:
 YAML
 }
 
+# TODO: Replace secrets in next three manifests with SM secrets
   resource "kubectl_manifest" "rds_secret" {
     yaml_body = <<YAML
 apiVersion: v1
 kind: Secret
 metadata:
   name: chainlink-secrets-toml
+  namespace: ${local.namespace}
 type: Opaque
 stringData:
   secrets.toml: |
@@ -330,6 +415,156 @@ stringData:
 YAML
   }
 
+  resource "kubectl_manifest" "evm_secret" {
+    yaml_body = <<YAML
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chainlink-config-toml
+  namespace: ${local.namespace}
+data:
+  config.toml: |
+    [Log]
+    Level = 'warn'
+
+    [WebServer]
+    AllowOrigins = '*'
+    SecureCookies = false
+
+    [WebServer.TLS]
+    HTTPSPort = 0
+
+    [[EVM]]
+    ChainID = '80001'
+
+    [[EVM.Nodes]]
+    Name = 'Mumbai'
+    WSURL = 'wss'
+    HTTPURL = 'http'
+YAML
+  }
+
+
+  resource "kubectl_manifest" "api_secret" {
+    yaml_body = <<YAML
+apiVersion: v1
+kind: Secret
+metadata:
+  name: chainlink-configmap
+  #namespace: socialmaven
+type: Opaque
+stringData:
+  API_LOGIN: |
+    x@y.z
+    POSTGR3S123456789!
+YAML
+  }
+
 # resource "kubectl_manifest" "geth_node_pod" {
 #   manifest = file("../kubernetes/geth.yml") 
 # }
+
+
+# Kubernetes Addons
+
+module "eks_blueprints_kubernetes_addons" {
+  source = "./modules/kubernetes-addons"
+
+  eks_cluster_id       = module.eks.cluster_name
+  eks_cluster_endpoint = module.eks.cluster_endpoint
+  eks_oidc_provider    = module.eks.oidc_provider
+  eks_cluster_version  = module.eks.cluster_version
+
+  enable_external_secrets = true
+  enable_amazon_eks_coredns = true
+
+  tags = local.tags
+}
+
+#---------------------------------------------------------------
+# External Secrets Operator - Secret
+#---------------------------------------------------------------
+
+resource "aws_kms_key" "secrets" {
+  enable_key_rotation = true
+}
+
+module "cluster_secretstore_role" {
+  source                      = "./modules/irsa"
+  kubernetes_namespace        = local.namespace
+  create_kubernetes_namespace = false
+  kubernetes_service_account  = local.cluster_secretstore_sa
+  irsa_iam_policies           = [aws_iam_policy.cluster_secretstore.arn]
+  eks_cluster_id              = module.eks.cluster_name
+  eks_oidc_provider_arn       = module.eks.oidc_provider_arn
+
+  depends_on = [module.eks_blueprints_kubernetes_addons]
+}
+
+resource "aws_iam_policy" "cluster_secretstore" {
+  name_prefix = local.cluster_secretstore_sa
+  policy      = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:GetResourcePolicy",
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:ListSecretVersionIds"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kms:Decrypt"
+      ],
+      "Resource": "${aws_kms_key.secrets.arn}"
+    }
+  ]
+}
+POLICY
+}
+
+resource "kubectl_manifest" "cluster_secretstore" {
+  yaml_body  = <<YAML
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterSecretStore
+metadata:
+  name: ${local.cluster_secretstore_name}
+spec:
+  provider:
+    aws:
+      service: SecretsManager
+      region: ${local.region}
+      auth:
+        jwt:
+          serviceAccountRef:
+            name: ${local.cluster_secretstore_sa}
+            namespace: ${local.namespace}
+YAML
+  depends_on = [module.eks_blueprints_kubernetes_addons]
+}
+
+resource "kubectl_manifest" "secret" {
+  for_each = aws_secretsmanager_secret.secrets
+  yaml_body  = <<YAML
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: ${each.key}
+  namespace: ${local.namespace}
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: ${local.cluster_secretstore_name}
+    kind: ClusterSecretStore
+  dataFrom:
+  - extract:
+      key: ${each.value.name}
+YAML
+  depends_on = [kubectl_manifest.cluster_secretstore]
+}

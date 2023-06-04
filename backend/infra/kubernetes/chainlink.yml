@@ -9,6 +9,23 @@ preemptionPolicy: Never
 globalDefault: false
 description: "This priority class will not cause other pods to be preempted."
 ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-lens-api-ea-access
+spec:
+  podSelector:
+    matchLabels:
+      app: lens-api-ea
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: chainlink-node
+    ports:
+    - protocol: TCP
+      port: 8080
+# --- 
 # apiVersion: v1
 # kind: Secret
 # metadata:
@@ -22,42 +39,53 @@ description: "This priority class will not cause other pods to be preempted."
 #     [Database]
 #     URL = 'postgresql://postgres:POSTGR3S123456789!<rds>:5432/chainlink_db'
 # ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: chainlink-configmap
-  #namespace: socialmaven
-type: Opaque
-stringData:
-  API_LOGIN: |
-    x@y.z
-    POSTGR3S123456789!
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: chainlink-config-toml
-  #namespace: socialmaven
-data:
-  config.toml: |
-    [Log]
-    Level = 'warn'
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: chainlink-configmap
+#   #namespace: socialmaven
+# type: Opaque
+# stringData:
+#   API_LOGIN: |
+#     x@y.z
+#     POSTGR3S123456789!
+# ---
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: lens-ea-env
+#   #namespace: socialmaven
+# type: Opaque
+# stringData:
+#   API_LOGIN: |
+#     x@y.z
+#     POSTGR3S123456789!
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: chainlink-config-toml
+#   #namespace: socialmaven
+# data:
+#   config.toml: |
+#     [Log]
+#     Level = 'warn'
 
-    [WebServer]
-    AllowOrigins = '*'
-    SecureCookies = false
+#     [WebServer]
+#     AllowOrigins = '*'
+#     SecureCookies = false
 
-    [WebServer.TLS]
-    HTTPSPort = 0
+#     [WebServer.TLS]
+#     HTTPSPort = 0
 
-    [[EVM]]
-    ChainID = '80001'
+#     [[EVM]]
+#     ChainID = '80001'
 
-    [[EVM.Nodes]]
-    Name = 'Mumbai'
-    WSURL = 'wss://geth:8546'
-    HTTPURL = 'https://geth:8545'
----
+#     [[EVM.Nodes]]
+#     Name = 'Mumbai'
+#     WSURL = 'wss://geth:8546'
+#     HTTPURL = 'https://geth:8545'
+# ---
 # apiVersion: v1
 # kind: Pod
 # metadata:

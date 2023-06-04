@@ -67,3 +67,6 @@ The Chainlink Fall 2022 workshop/ repo on External Adapters was the starting poi
 
 
 Minor modifications were made to the Lens API Examples to adapt them to use in an EA: https://github.com/lens-protocol/api-examples
+
+
+The Terraform AWS EKS Blueprints module gave me a great starting point for getting Secrets Manager secrets into EKS: https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/external-secrets 
