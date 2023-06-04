@@ -8,8 +8,31 @@ locals {
   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
 
   tags = {
-    app    = "cf"
+    app    = "maven"
   }
+
+  secrets = [
+    "PK",
+    "MUMBAI_RPC_URL",
+    "LENS_API",
+    "LENS_HUB_CONTRACT",
+    "LENS_PERIPHERY_CONTRACT",
+    "LENS_EA_BRIDGE_ACCESS_TOKEN",
+  ]
+
+  cluster_secretstore_name = "cluster-secretstore-sm"
+  cluster_secretstore_sa   = "cluster-secretstore-sa"
+  secretstore_name         = "secretstore-ps"
+  secretstore_sa           = "secretstore-sa"
+}
+
+# Secrets
+resource "aws_secretsmanager_secret" "secrets" {
+  lifecycle {
+    prevent_destroy = true
+  }
+  for_each = local.secrets
+  name = each.key
 }
 
 # VPC
@@ -230,6 +253,7 @@ resource "null_resource" "push_to_ecr" {
 }
 
 # Pod manifests
+/*
 data "kubectl_file_documents" "docs" {
     content = file("../kubernetes/chainlink.yml")
 }
@@ -333,3 +357,4 @@ YAML
 # resource "kubectl_manifest" "geth_node_pod" {
 #   manifest = file("../kubernetes/geth.yml") 
 # }
+*/
