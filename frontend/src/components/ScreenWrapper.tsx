@@ -1,4 +1,5 @@
 const ScreenWrapper = ({children}:{children:any}) => {
+
   return (
     <main
       className="bg-bgColor h-[100vh] w-full flex flex-col items-center justify-center"
@@ -8,5 +9,6 @@ const ScreenWrapper = ({children}:{children:any}) => {
     </main>
   );
 };
+
 
 export default ScreenWrapper;

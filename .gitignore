@@ -1,2 +1,6 @@
 # Terraform files
 .terraform
+node_modules
+*.env
+response.json
+terraform.tfstate*

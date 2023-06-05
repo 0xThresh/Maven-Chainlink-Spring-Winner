@@ -1,8 +1,17 @@
+import DashboardSideBar from '@/components/DashboardSideBar'
+import DashboardNavBar from '@/components/DashboardNavBar'
 import React from 'react'
 
 const AgencyDashboard = () => {
   return (
-    <div>AgencyDashboard</div>
+    <>
+      <DashboardNavBar />
+      {/** header can go here */}
+      <div className="flex">
+        <DashboardSideBar />
+        AgencyDashboard
+      </div>
+    </>
   )
 }
 

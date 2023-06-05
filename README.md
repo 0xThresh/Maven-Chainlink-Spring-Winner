@@ -57,7 +57,8 @@
 - JavaScript
 - TypeScript 
 - wagmi
-- ChakraUI and/or Tailwind
+- Tailwind
+- Recoil
 
 ### Backend
 - Kubernetes 

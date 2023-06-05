@@ -5,6 +5,7 @@
 .btn-primary {
   @apply flex items-center justify-center bg-slate-800 text-white
 }
+
 .btn-primary-color-changing {
   @apply flex items-center justify-center bg-slate-800 text-white hover:text-slate-800 hover:bg-white hover:border-[1px] hover:border-slate-800 transition-colors duration-300
 }
@@ -24,4 +25,35 @@
 }
 .animate-height-agency-form {
   animation: agency-form-animate 500ms ease;
+
+
+body {
+    background-color: #E9E8E4;
+}
+
+progress {
+    height: 1rem;
+    width: 33%;
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+
+progress[value]::-webkit-progress-value {
+    background-color:rgb(0, 204, 61);
+      border-radius: 20px;
+}
+
+progress[value^="4"]::-webkit-progress-value {
+    background-color: rgb(211, 198, 9);
+}
+
+
+progress[value^="12"]::-webkit-progress-value {
+    background-color: rgb(204, 255, 0);
+}
+
+progress[value^="22"]::-webkit-progress-value {
+    background-color: red;
+
 }
