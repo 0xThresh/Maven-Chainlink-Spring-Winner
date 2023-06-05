@@ -6,6 +6,27 @@
   @apply flex items-center justify-center bg-slate-800 text-white
 }
 
+.btn-primary-color-changing {
+  @apply flex items-center justify-center bg-slate-800 text-white hover:text-slate-800 hover:bg-white hover:border-[1px] hover:border-slate-800 transition-colors duration-300
+}
+.btn-secondary {
+  @apply flex items-center justify-center border-[1px] border-slate-800 bg-bgColor
+}
+.btn-secondary-color-changing {
+  @apply flex items-center justify-center border-[1px] border-slate-800 bg-bgColor hover:bg-slate-800 hover:text-white duration-300 transition-colors
+}
+@keyframes agency-form-animate {
+  0% {
+    height: 0px;
+  }
+  100% {
+    height: 384px;
+  }
+}
+.animate-height-agency-form {
+  animation: agency-form-animate 500ms ease;
+
+
 body {
     background-color: #E9E8E4;
 }
@@ -34,4 +55,5 @@ progress[value^="12"]::-webkit-progress-value {
 
 progress[value^="22"]::-webkit-progress-value {
     background-color: red;
+
 }
