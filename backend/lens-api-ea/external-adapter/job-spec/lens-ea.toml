@@ -1,8 +1,9 @@
 type = "directrequest"
 schemaVersion = 1
 name = "lens-ea"  
+externalJobID = "c89cd085-2cf0-4f6b-8e5b-bd5da5841214"
 maxTaskDuration = "0s"
-contractAddress =  "0x93e27DAc3b1Aa29CE76F75901b77D1C1758dDB9f"
+contractAddress =  "0xabEE66bB661F34c9C3766FF5bC3BABa83b120208"
 minContractPaymentLinkJuels = "0"
 observationSource = """
     decode_log   [type=ethabidecodelog
@@ -11,13 +12,13 @@ observationSource = """
                   topics="$(jobRun.logTopics)"]
 
     decode_cbor  [type=cborparse data="$(decode_log.data)"]
-    fetch        [type=bridge name="lens-ea" requestData="{\\"id\\": $(jobSpec.externalJobID), \\"data\\": { \\"number\\": $(decode_cbor.number) , \\"infoType\\": $(decode_cbor.infoType)}}"]
+    fetch        [type=bridge name="lens-ea" requestData="{\\"id\\": $(jobSpec.externalJobID), \\"data\\": { \\"profileId\\": $(decode_cbor.profileId) , \\"operation\\": $(decode_cbor.operation)}}"]
     parse        [type=jsonparse path="data,result" data="$(fetch)"]
-    encode_data  [type=ethabiencode abi="(bytes32 requestId,string info)" data="{\\"requestId\\": $(decode_log.requestId),\\"info\\": $(parse) }"]
+    encode_data  [type=ethabiencode abi="(bytes32 requestId,uint256 value)" data="{\\"requestId\\": $(decode_log.requestId),\\"value\\": $(parse) }"]
     encode_tx    [type=ethabiencode
                   abi="fulfillOracleRequest2(bytes32 requestId, uint256 payment, address callbackAddress, bytes4 callbackFunctionId, uint256 expiration, bytes calldata data)"
                   data="{\\"requestId\\": $(decode_log.requestId), \\"payment\\": $(decode_log.payment), \\"callbackAddress\\": $(decode_log.callbackAddr), \\"callbackFunctionId\\": $(decode_log.callbackFunctionId), \\"expiration\\": $(decode_log.cancelExpiration), \\"data\\": $(encode_data)}"]
-    submit_tx    [type=ethtx to="0x93e27DAc3b1Aa29CE76F75901b77D1C1758dDB9f" data="$(encode_tx)"]
+    submit_tx    [type=ethtx to="0xabEE66bB661F34c9C3766FF5bC3BABa83b120208" data="$(encode_tx)"]
 
     decode_log -> decode_cbor -> fetch -> parse -> encode_data -> encode_tx -> submit_tx
 """

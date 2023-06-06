@@ -4,24 +4,23 @@ pragma solidity ^0.8.9;
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
-contract SocialMaven is ChainlinkClient, ConfirmedOwner {
+contract Maven is ChainlinkClient, ConfirmedOwner {
      
     using Chainlink for Chainlink.Request;
 
     uint256 private constant ORACLE_PAYMENT = 1 * LINK_DIVISIBILITY; // 1 * 10**18
-    string public lastRetrievedInfo;
+    uint256 public lastRetrievedInfo;
 
     event RequestForInfoFulfilled(
         bytes32 indexed requestId,
-        string indexed response
+        uint256 indexed response
     );
 
     // Mumbai LINK: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB 
-    constructor(address _linkTokenAddress, address _oracleAddress) ConfirmedOwner(msg.sender) {
+    constructor(address _linkTokenAddress) ConfirmedOwner(msg.sender) {
        setChainlinkToken(_linkTokenAddress);
-       setChainlinkOracle(_oracleAddress);
-       jobId = "3a5f73c2-4134-428d-853d-033380dcf0f1"; // TODO: Plug in Job ID when deployed to Chainlink node 
-       fee = (1 * LINK_DIVISIBILITY) / 10; // 0,1 * 10**18 (Varies by network and job)
+    //    setChainlinkOracle(_oracleAddress);
+    //    fee = (1 * LINK_DIVISIBILITY) / 10; // 0,1 * 10**18 (Varies by network and job)
     }
 
     struct Deal {
@@ -40,7 +39,7 @@ contract SocialMaven is ChainlinkClient, ConfirmedOwner {
 
     mapping(uint256 => Deal) public deals;
     uint256 public dealCounter;
-
+    
     function startDeal(address _agency, uint256 _amount) external payable {
         require(msg.value >= _amount, "Insufficient payment");
 
@@ -76,12 +75,10 @@ contract SocialMaven is ChainlinkClient, ConfirmedOwner {
 
     }
 
-
     function checkProfilePosts(
         address _oracle,
         string memory _jobId,
         string memory _lensProfileId
-        // string memory _operation // TODO: Implement operation 
     ) public onlyOwner {
         Chainlink.Request memory req = buildOperatorRequest(
             stringToBytes32(_jobId),
@@ -89,9 +86,17 @@ contract SocialMaven is ChainlinkClient, ConfirmedOwner {
         );
 
         req.add("profileId", _lensProfileId);
-        //req.add("operation", _operation);
+        req.add("operation", "get-profile");
         sendOperatorRequestTo(_oracle, req, ORACLE_PAYMENT);
     }
+
+    function fulfillRequestInfo(bytes32 _requestId, uint256 _info) 
+        public 
+        recordChainlinkFulfillment(_requestId)
+        {
+            emit RequestForInfoFulfilled(_requestId, _info);
+            lastRetrievedInfo = _info;
+        }
 
     function contractBalances()
         public
