@@ -9,7 +9,9 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
     using Chainlink for Chainlink.Request;
 
     uint256 private constant ORACLE_PAYMENT = 1 * LINK_DIVISIBILITY; // 1 * 10**18
-    uint256 public lastRetrievedInfo;
+    uint256 public lastRetrievedInfo = 10000000; // Setting a ridiculous number here for detecting whether or not data has been gathered via EA yet
+    address public oracle;
+    string public jobId;
 
     event RequestForInfoFulfilled(
         bytes32 indexed requestId,
@@ -17,9 +19,10 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
     );
 
     // Mumbai LINK: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB 
-    constructor(address _linkTokenAddress) ConfirmedOwner(msg.sender) {
+    constructor(address _linkTokenAddress, address _oracleAddress, string memory _jobId) ConfirmedOwner(msg.sender) {
        setChainlinkToken(_linkTokenAddress);
-    //    setChainlinkOracle(_oracleAddress);
+       oracle = _oracleAddress;
+       jobId = _jobId;
     //    fee = (1 * LINK_DIVISIBILITY) / 10; // 0,1 * 10**18 (Varies by network and job)
     }
 
@@ -39,9 +42,25 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
 
     mapping(uint256 => Deal) public deals;
     uint256 public dealCounter;
+
+    function checkProfilePosts(
+        //address _oracle,
+        //string memory _jobId,
+        string memory _lensProfileId
+    ) public onlyOwner {
+        Chainlink.Request memory req = buildOperatorRequest(
+            stringToBytes32(jobId),
+            this.fulfillRequestInfo.selector
+        );
+
+        req.add("profileId", _lensProfileId);
+        req.add("operation", "get-profile");
+        sendOperatorRequestTo(oracle, req, ORACLE_PAYMENT);
+    }
     
-    function startDeal(address _agency, uint256 _amount) external payable {
+    function startDeal(address _agency, uint256 _amount, string memory _lensProfileId) external payable {
         require(msg.value >= _amount, "Insufficient payment");
+        require(lastRetrievedInfo != 10000000, "No profile data has been gathered");
 
         dealCounter++;
         Deal storage newDeal = deals[dealCounter];
@@ -50,6 +69,8 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
         newDeal.contractingAgency = _agency;
         newDeal.dealAmount = _amount;
         newDeal.startDeal = true;
+        newDeal.lensProfileId = _lensProfileId;
+        newDeal.postsBeforeContract = lastRetrievedInfo;
     }
 
     function revokeDeal(uint256 _dealId) external {
@@ -58,7 +79,8 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
         require(!deal.isDealCancelled, "Deal is already cancelled");
 
         deal.isDealCancelled = true;
-        sendPaymentToClient(deal.client, deal.dealAmount);
+        address payable clientWallet = payable(address(deal.client));
+        sendPaymentToClient(clientWallet, deal.dealAmount);
     }
 
     function sendPaymentToAgency(address _agency, uint256 _amount) internal {
@@ -71,25 +93,11 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
         _client.transfer(_amount);
     }
 
-    function checkAgencyReputation(address _agency) external {
+    // function checkAgencyReputation(address _agency) external {
 
-    }
+    // }
 
-    function checkProfilePosts(
-        address _oracle,
-        string memory _jobId,
-        string memory _lensProfileId
-    ) public onlyOwner {
-        Chainlink.Request memory req = buildOperatorRequest(
-            stringToBytes32(_jobId),
-            this.fulfillRequestInfo.selector
-        );
-
-        req.add("profileId", _lensProfileId);
-        req.add("operation", "get-profile");
-        sendOperatorRequestTo(_oracle, req, ORACLE_PAYMENT);
-    }
-
+    // Chainlink functions 
     function fulfillRequestInfo(bytes32 _requestId, uint256 _info) 
         public 
         recordChainlinkFulfillment(_requestId)
