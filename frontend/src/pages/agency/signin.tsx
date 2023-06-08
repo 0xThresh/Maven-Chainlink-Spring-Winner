@@ -18,14 +18,14 @@ const Signin = () => {
         <input type="file" id="profile" hidden />
         <fieldset className="mt-6">
           <legend className="ml-3 translate-y-2 bg-bgColor px-1">Primary Language</legend>
-          <select defaultValue={"English"} className="w-96 h-10 outline-none border-[1px] border-black pl-2 bg-bgColor">
+          <select defaultValue={"English"} className="w-[300px] h-10 outline-none border-[1px] border-black pl-2 bg-bgColor">
             <option value="French">FRENCH</option>
             <option value="English">ENGLISH</option>
             <option value="Spanish">SPANISH</option>
           </select>
         </fieldset>
         
-        <button type="submit" className="btn-primary h-10 w-96 mt-8">Submit</button>
+        <button type="submit" className="btn-primary h-10 w-[300px] mt-8">Submit</button>
       </form>
     </ScreenWrapper>
   );
