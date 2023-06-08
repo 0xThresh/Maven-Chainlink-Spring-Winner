@@ -10,6 +10,7 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
 
     uint256 private constant ORACLE_PAYMENT = 1 * LINK_DIVISIBILITY; // 1 * 10**18
     uint256 public lastRetrievedInfo;
+    mapping(address => string) public agencyAddress;
 
     event RequestForInfoFulfilled(
         bytes32 indexed requestId,
@@ -39,6 +40,11 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
     mapping(uint256 => Deal) public deals;
     uint256 public dealCounter;
     
+    function checkAgency(address _agencyAddress) public view returns(string memory) {
+        require(bytes(agencyAddress[_agencyAddress]).length != 0, "Agency does not exist");
+        return agencyAddress[_agencyAddress];
+    }
+
     function startDeal(address _agency, uint256 _amount, uint256 _requiredNumberOfPosts, string memory _lensProfileId) external payable {
         require(msg.value >= _amount, "Insufficient payment");
 
@@ -79,7 +85,7 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
         require(deal.startDeal, "Deal does not exist or not started");
         require((lastRetrievedInfo - deal.postsBeforeContract) >= deal.requiredNumberOfPosts, "Required number of posts not reached");
         require(address(this).balance >= _amount, "Insufficient balance");
-        
+
         payable(deal.contractingAgency).transfer(_amount);
     }
 
