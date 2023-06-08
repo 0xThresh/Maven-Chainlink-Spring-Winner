@@ -6,6 +6,8 @@ import { useProfile } from '@lens-protocol/react-web';
 import { useRecoilValue } from 'recoil';
 import {profileHandlesState, selectedHandleState} from '@/store'
 import Router from 'next/router';
+import DashboardNavBar from '@/components/DashboardNavBar';
+import DashboardSideBar from '@/components/DashboardSideBar';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement);
 
@@ -35,7 +37,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    if(handles.length == 0) {
+    if(handles[0] == '') {
       Router.replace('/')
     }
   }, [])
@@ -43,11 +45,11 @@ const Dashboard = () => {
   return (
     <div className='h-full w-full'>
       <div className='h-10 w-full'>
-
+        <DashboardNavBar/>
       </div>
       <div className='h-[calc(100vh-5rem)] w-full flex p-8'>
         <div className='h-full w-3/12'>
-          {/** sidebar */}
+          <DashboardSideBar/>
         </div>
         <div className='h-full w-9/12'>
           <ProfilesNavigation isUserDashboard/>

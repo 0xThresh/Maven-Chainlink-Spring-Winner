@@ -1,4 +1,5 @@
-FROM node:16.17
+FROM node:16.17-alpine
+#FROM arm64v8/node:16.17
 SHELL ["/bin/bash"]
 
 COPY . /opt/lens-ea

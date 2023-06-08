@@ -1,6 +1,7 @@
 import { profileHandlesState, selectedHandleState } from '@/store'
 import { formatPicture } from '@/utils'
 import { useProfile } from '@lens-protocol/react-web'
+import { useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
 type NavigationBoardProps = {
@@ -11,29 +12,34 @@ type NavigationBoardProps = {
 
 const Navigations = ({isUserDashboard}:{isUserDashboard?:boolean}) => {
 
+  const [leftArrowDisbaled, setLeftArrowDisabled] = useState(false)
+  const [rightArrowDisbaled, setRightArrowDisabled] = useState(false)
+
   const [handleIndex, setHandleIndex] = useRecoilState(selectedHandleState)
   const handles = useRecoilValue(profileHandlesState)
 
   const { data:profile } = useProfile({handle:handles[handleIndex]})
 
   const moveToPreviousHandle = () => {
+    setRightArrowDisabled(false)
     if(handleIndex <= 0) {
-      return
+      return setLeftArrowDisabled(true)
     }
     setHandleIndex(handleIndex-1)
 
   }
 
   const moveToNextHandle = () => {
-    if(handleIndex >= handles.length) {
-      return
+    setLeftArrowDisabled(false)
+    if(handleIndex >= handles.length-1) {
+      return setRightArrowDisabled(true)
     }
     setHandleIndex(handleIndex+1)
   }
 
   return (
     <>
-    <NavigationBoard dashboardName={isUserDashboard ? 'User' : 'Agency'} profileName='Vitalik.lens' connected={profile?.ownedByMe ? true : false}/>
+    <NavigationBoard dashboardName={isUserDashboard ? 'User' : 'Agency'} profileName={profile?.handle!} connected={profile?.ownedByMe ? true : false}/>
     <div className='w-full h-14 flex items-center bg-neutralGray rounded-lg border-2 border-gray-600'>
         <div className='h-full flex items-center mx-16'>
         {
@@ -45,11 +51,11 @@ const Navigations = ({isUserDashboard}:{isUserDashboard?:boolean}) => {
             />
           )
         }
-          <h2>{profile?.handle}</h2>  
+          <h2 className='w-24'>{profile?.handle}</h2>  
         </div>
         <div className='flex'>
-            <button onClick={moveToPreviousHandle}><img src="/assets/arrowLeft.svg" className='h-5 mr-5' alt="" /></button>
-            <button onClick={moveToNextHandle}><img src="/assets/arrowRight.svg" className='h-5' alt="" /></button>
+            {!leftArrowDisbaled && <button onClick={moveToPreviousHandle}><img src="/assets/arrowLeft.svg" className='h-5 w-5 mr-3' alt="" /></button>}
+            {!rightArrowDisbaled && <button onClick={moveToNextHandle}><img src="/assets/arrowRight.svg" className={`h-5 w-5 ${leftArrowDisbaled ? 'ml-11':'ml-3'}`} alt="" /></button>}
         </div>
     </div>
     </>

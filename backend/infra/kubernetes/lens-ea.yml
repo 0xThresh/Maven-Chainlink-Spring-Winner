@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lens-ea
+  #namespace: socialmaven
+spec:
+  containers:
+  - name: lens-api-ea
+    image: <ecr>:latest
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 8080
+      name: lens-api-ea
+    command: ["yarn", "start"]
