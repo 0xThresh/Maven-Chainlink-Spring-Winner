@@ -19,7 +19,6 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
     // Mumbai LINK: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB 
     constructor(address _linkTokenAddress) ConfirmedOwner(msg.sender) {
        setChainlinkToken(_linkTokenAddress);
-    //    setChainlinkOracle(_oracleAddress);
     //    fee = (1 * LINK_DIVISIBILITY) / 10; // 0,1 * 10**18 (Varies by network and job)
     }
 
@@ -28,7 +27,7 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
         address client;
         address contractingAgency;
         uint256 dealAmount;
-        uint256 contractDuration;
+        uint256 requiredNumberOfPosts;
         bool startDeal;
         bool isDealCancelled;
         bool isDealDone;
@@ -40,7 +39,7 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
     mapping(uint256 => Deal) public deals;
     uint256 public dealCounter;
     
-    function startDeal(address _agency, uint256 _amount) external payable {
+    function startDeal(address _agency, uint256 _amount, uint256 _requiredNumberOfPosts, string memory _lensProfileId) external payable {
         require(msg.value >= _amount, "Insufficient payment");
 
         dealCounter++;
@@ -49,8 +48,20 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
         newDeal.client = msg.sender;
         newDeal.contractingAgency = _agency;
         newDeal.dealAmount = _amount;
+        newDeal.requiredNumberOfPosts = _requiredNumberOfPosts;
         newDeal.startDeal = true;
+        newDeal.lensProfileId = _lensProfileId;
+        newDeal.postsBeforeContract = lastRetrievedInfo;
     }
+
+    function checkAgencyProgress(uint256 _dealId) external {
+        Deal storage deal = deals[_dealId];
+        require(deal.startDeal, "Deal does not exist or not started");
+
+        uint256 postsDifference = lastRetrievedInfo - deal.postsBeforeContract;
+
+        deal.numberOfAgencyPosts = postsDifference - deal.requiredNumberOfPosts;
+}
 
     function revokeDeal(uint256 _dealId) external {
         Deal storage deal = deals[_dealId];
@@ -58,21 +69,23 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
         require(!deal.isDealCancelled, "Deal is already cancelled");
 
         deal.isDealCancelled = true;
-        sendPaymentToClient(deal.client, deal.dealAmount);
+        address payable clientWallet = payable(address(deal.client));
+        sendPaymentToClient(clientWallet, deal.dealAmount);
     }
 
-    function sendPaymentToAgency(address _agency, uint256 _amount) internal {
+    function sendPaymentToAgency(uint256 _dealId, uint256 _amount) internal {
+        Deal storage deal = deals[_dealId];
+
+        require(deal.startDeal, "Deal does not exist or not started");
+        require((lastRetrievedInfo - deal.postsBeforeContract) >= deal.requiredNumberOfPosts, "Required number of posts not reached");
         require(address(this).balance >= _amount, "Insufficient balance");
-        payable(_agency).transfer(_amount);
+        
+        payable(deal.contractingAgency).transfer(_amount);
     }
 
     function sendPaymentToClient(address payable _client, uint256 _amount) internal {
         require(address(this).balance >= _amount, "Insufficient balance");
         _client.transfer(_amount);
-    }
-
-    function checkAgencyReputation(address _agency) external {
-
     }
 
     function checkProfilePosts(
