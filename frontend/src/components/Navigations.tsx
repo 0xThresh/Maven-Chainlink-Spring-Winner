@@ -40,13 +40,13 @@ const Navigations = ({isUserDashboard}:{isUserDashboard?:boolean}) => {
   return (
     <>
     <NavigationBoard dashboardName={isUserDashboard ? 'User' : 'Agency'} profileName={profile?.handle!} connected={profile?.ownedByMe ? true : false}/>
-    <div className='w-full h-14 flex items-center bg-neutralGray rounded-lg border-2 border-gray-600'>
-        <div className='h-full flex items-center mx-16'>
+    <div className='w-full h-10 sm:h-14 flex items-center justify-center sm:justify-start bg-neutralGray rounded-lg border-2 border-gray-600'>
+        <div className='h-full flex items-center mx-10 sm:mx-16'>
         {
           profile?.picture?.__typename === 'MediaSet' && (
             <img
               alt={profile.handle}
-              className='h-10 w-10 mr-6 rounded-full'
+              className='h-8 w-8 sm:h-10 sm:w-10 mr-3 sm:mr-6 rounded-full'
               src={formatPicture(profile.picture)}
             />
           )
@@ -54,8 +54,8 @@ const Navigations = ({isUserDashboard}:{isUserDashboard?:boolean}) => {
           <h2 className='w-24'>{profile?.handle}</h2>  
         </div>
         <div className='flex'>
-            {!leftArrowDisbaled && <button onClick={moveToPreviousHandle}><img src="/assets/arrowLeft.svg" className='h-5 w-5 mr-3' alt="" /></button>}
-            {!rightArrowDisbaled && <button onClick={moveToNextHandle}><img src="/assets/arrowRight.svg" className={`h-5 w-5 ${leftArrowDisbaled ? 'ml-11':'ml-3'}`} alt="" /></button>}
+            {!leftArrowDisbaled && <button onClick={moveToPreviousHandle}><img src="/assets/arrowLeft.svg" className='h-3 w-3 sm:h-5 sm:w-5 mr-1 sm:mr-3' alt="" /></button>}
+            {!rightArrowDisbaled && <button onClick={moveToNextHandle}><img src="/assets/arrowRight.svg" className={`h-3 w-3 sm:h-5 sm:w-5 ${leftArrowDisbaled ? 'ml-11':'ml-3'}`} alt="" /></button>}
         </div>
     </div>
     </>
@@ -64,8 +64,8 @@ const Navigations = ({isUserDashboard}:{isUserDashboard?:boolean}) => {
 
 const NavigationBoard = ({dashboardName, profileName, connected}:NavigationBoardProps) => {
   return (
-    <div className='w-full h-14 flex items-center bg-neutralGray rounded-lg border-2 my-4 border-gray-600'>
-      <div className='w-8/12 h-full flex items-center justify-between'>
+    <div className='w-full hidden h-14 sm:flex items-center bg-neutralGray rounded-lg border-2 my-4 border-gray-600'>
+      <div className='w-8/12  h-full flex items-center justify-between'>
         <div className='h-full flex items-center mx-12'>
           <img className='h-5 w-5 mr-4 rounded-full' src="/assets/homeIcon.svg" alt=""/>
           <h2>{dashboardName} Dashboard</h2>  
