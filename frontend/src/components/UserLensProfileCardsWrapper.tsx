@@ -3,7 +3,7 @@ import UserLensProfileCards from "./UserLensProfileCards";
 
 interface IUserProfileCardsWrapper {
   profileList: string[];
-  parentSetter: Dispatch<SetStateAction<number | undefined>>;
+  parentSetter: Dispatch<SetStateAction<number>>;
 }
 
 const UserLensProfileCardsWrapper = ({profileList, parentSetter}: IUserProfileCardsWrapper) => {

@@ -21,9 +21,9 @@ const Signin = () => {
         </fieldset>
         <fieldset className='mt-6'>
           <legend className='ml-2 translate-y-2 '>Agency Name</legend>
-          <select className='w-96 h-10 outline-none border-[1px] border-black pl-2'>
+          <select defaultValue={"English"} className='w-96 h-10 outline-none border-[1px] border-black pl-2'>
             <option value="French">FRENCH</option>
-            <option value="English" selected>ENGLISH</option>
+            <option value="English">ENGLISH</option>
             <option value="Spanish">SPANISH</option>
           </select>
         </fieldset>

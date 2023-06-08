@@ -1,24 +1,37 @@
+'use client'
 import '@/styles/globals.css'
+//import '@rainbow-me/rainbowkit/styles.css';
 import type { AppProps } from 'next/app'
-
-import { WagmiConfig, createConfig, configureChains } from 'wagmi'
-import { polygonMumbai } from 'wagmi/chains'
+import { polygonMumbai, mainnet, polygon } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
- 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [polygonMumbai],
-  [publicProvider()],
-)
+import { LensProvider, LensConfig, development } from '@lens-protocol/react-web'
+import { bindings as wagmiBindings } from '@lens-protocol/wagmi'
+import { configureChains, createClient, WagmiConfig } from 'wagmi'
+import { RecoilRoot } from 'recoil';
 
-const wagmiConfig = createConfig({
+const { provider, webSocketProvider } = configureChains([polygonMumbai, polygon, mainnet], [publicProvider()])
+
+const client = createClient({
   autoConnect: true,
-  publicClient,
-  webSocketPublicClient,
-})
+  provider,
+  webSocketProvider,
+});
+
+const lensConfig: LensConfig = {
+  bindings: wagmiBindings(),
+  environment: development,
+};
 
 export default function App({ Component, pageProps }: AppProps) {
+
   return(
-  <WagmiConfig config={wagmiConfig}>
-      <Component {...pageProps} />
+  <WagmiConfig client={client}>
+      <LensProvider config={lensConfig}>
+        <RecoilRoot>
+          <Component {...pageProps} />
+        </RecoilRoot>
+      </LensProvider>
+      
   </WagmiConfig>);
 }
+

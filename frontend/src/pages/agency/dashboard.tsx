@@ -54,7 +54,6 @@ const AgencyDashboard = () => {
           <ProfilesNavigation/>
           <div className='h-80 w-full flex justify-between mt-6'>
             <div className='w-7/12 bg-white self-start border-2 border-gray-500 rounded-xl'>
-
               <form className='w-full flex flex-col items-center mt-4' onSubmit={postToLens}>
                 <div className='flex w-full h-3/4 justify-between px-10'>
                   <label htmlFor='video' className='w-5/12 h-40 flex items-center justify-center cursor-pointer bg-bgColor rounded-xl border-2 border-black'>
@@ -87,8 +86,7 @@ const AgencyDashboard = () => {
 
               </form>
               </div>
-            </div>
-            <div className='w-4/12 bg-white self-start pb-4 border-2 border-gray-500 rounded-xl'>
+              <div className='w-4/12 bg-white self-start pb-4 border-2 border-gray-500 rounded-xl'>
               <h3 className='w-full px-4 py-2 bg-slate-100 border-b-2 border-slate-500 overflow-hidden rounded-xl'>Recent activities</h3>
               <ul className='ml-2 mt-4'>
                 <li className='flex items-center justify-between w-11/12 text-xs mb-2'>
@@ -104,7 +102,7 @@ const AgencyDashboard = () => {
                   <span className='font-bold'>35 minutes ago</span>
                 </li>
               </ul>
-            </div>
+          </div>
           </div>
           <div className='w-full flex justify-between items-center mt-2'>
             <div className='w-3/12 h-60 bg-white self-start pb-4 border-2 border-gray-500 rounded-xl'>
@@ -115,8 +113,9 @@ const AgencyDashboard = () => {
             </div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    
   )
 }
 

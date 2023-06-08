@@ -1,4 +1,7 @@
-import React from 'react'
+import { profileHandlesState, selectedHandleState } from '@/store'
+import { formatPicture } from '@/utils'
+import { useProfile } from '@lens-protocol/react-web'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 type NavigationBoardProps = {
   dashboardName: string
@@ -7,17 +10,46 @@ type NavigationBoardProps = {
 }
 
 const Navigations = ({isUserDashboard}:{isUserDashboard?:boolean}) => {
+
+  const [handleIndex, setHandleIndex] = useRecoilState(selectedHandleState)
+  const handles = useRecoilValue(profileHandlesState)
+
+  const { data:profile } = useProfile({handle:handles[handleIndex]})
+
+  const moveToPreviousHandle = () => {
+    if(handleIndex <= 0) {
+      return
+    }
+    setHandleIndex(handleIndex-1)
+
+  }
+
+  const moveToNextHandle = () => {
+    if(handleIndex >= handles.length) {
+      return
+    }
+    setHandleIndex(handleIndex+1)
+  }
+
   return (
     <>
-    <NavigationBoard dashboardName={isUserDashboard ? 'User' : 'Agency'} profileName='Vitalik.lens' connected={false}/>
+    <NavigationBoard dashboardName={isUserDashboard ? 'User' : 'Agency'} profileName='Vitalik.lens' connected={profile?.ownedByMe ? true : false}/>
     <div className='w-full h-14 flex items-center bg-neutralGray rounded-lg border-2 border-gray-600'>
         <div className='h-full flex items-center mx-16'>
-          <img className='h-12 w-12 mr-6 rounded-full' src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5DMh11jSfdQJ7ogMhIhGb-ubIvFxhgiPj5KhP9hx7j1Ftuiy_kthuIXKIojgnbvBdtWU&usqp=CAU" alt=""/>
-          <h2>Vitalik.lens</h2>  
+        {
+          profile?.picture?.__typename === 'MediaSet' && (
+            <img
+              alt={profile.handle}
+              className='h-10 w-10 mr-6 rounded-full'
+              src={formatPicture(profile.picture)}
+            />
+          )
+        }
+          <h2>{profile?.handle}</h2>  
         </div>
         <div className='flex'>
-            <img src="/assets/arrowLeft.svg" className='h-5 mr-5' alt="" />
-            <img src="/assets/arrowRight.svg" className='h-5' alt="" />
+            <button onClick={moveToPreviousHandle}><img src="/assets/arrowLeft.svg" className='h-5 mr-5' alt="" /></button>
+            <button onClick={moveToNextHandle}><img src="/assets/arrowRight.svg" className='h-5' alt="" /></button>
         </div>
     </div>
     </>

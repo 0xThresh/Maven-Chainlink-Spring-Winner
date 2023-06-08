@@ -1,21 +1,55 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import Link from 'next/link'
 import ScreenWrapper from '@/components/ScreenWrapper'
-
-const inter = Inter({ subsets: ['latin'] })
+import Router from 'next/router'
+import { useWalletLogin } from '@lens-protocol/react-web';
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { InjectedConnector } from 'wagmi/connectors/injected';
 
 export default function Home() {
+
+  const { isConnected } = useAccount()
+
+  const { execute: login, error: loginError, isPending: isLoginPending } = useWalletLogin();
+
+  const { disconnectAsync } = useDisconnect();
+
+  const { connectAsync } = useConnect({
+    connector: new InjectedConnector(),
+  });
+
+  const signin = async(userType:string) => {
+    if(userType=='user') {
+      if (isConnected) {
+        await disconnectAsync();
+      }
+  
+      const { connector } = await connectAsync();
+  
+      if (connector instanceof InjectedConnector) {
+        const signer = await connector.getSigner()
+        await login(signer)
+        Router.push('/user/signin')
+      }
+    } else {
+      Router.push('/agency/signin')
+    }
+  }
+
   return (
     <ScreenWrapper>
       <div className='w-3/12 flex justify-between'>
         <span className='flex items-center justify-center py-2 px-4 w-40 text-lg rounded-[26px] bg-slate-800 text-white hover:text-slate-800 hover:bg-white hover:border-[1px] hover:border-slate-800'>
-          <Link href={'/agency/signin'}>Agency Login</Link>
+          <button className='h-full w-full' onClick={() => signin('agency')}>
+            Agency login
+          </button>
         </span>
         <span className='flex items-center justify-center py-2 px-4 w-40 text-lg rounded-[26px] border-[1px] border-slate-800 bg-[#E9E8E4] hover:bg-slate-800 hover:text-white'>
-          <Link href={'/user/signin'}>User Login</Link>
+          <button className='h-full w-full' onClick={() => signin('user')}>
+            User login
+          </button>
         </span>  
       </div>
     </ScreenWrapper>
   )
 }
+
+
