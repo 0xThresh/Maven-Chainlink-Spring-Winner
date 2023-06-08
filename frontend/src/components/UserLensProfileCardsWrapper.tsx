@@ -10,12 +10,12 @@ const UserLensProfileCardsWrapper = ({profileList, parentSetter}: IUserProfileCa
   const [selected, setSelected] = useState<number>();
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="flex justify-evenly">
       {profileList.map((profile, index) => 
       <div key={index} onClick={() => {
         setSelected(index)
         parentSetter(index)
-      }} className=" cursor-pointer">
+      }} className=" flex-none cursor-pointer">
         <UserLensProfileCards profileName={profile} isSelected={index === selected} />
       </div>
       )}
