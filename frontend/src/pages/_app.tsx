@@ -1,6 +1,5 @@
-'use client'
+
 import '@/styles/globals.css'
-//import '@rainbow-me/rainbowkit/styles.css';
 import type { AppProps } from 'next/app'
 import { polygonMumbai, mainnet, polygon } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
