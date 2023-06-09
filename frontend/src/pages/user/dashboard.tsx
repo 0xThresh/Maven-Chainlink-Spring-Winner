@@ -59,7 +59,7 @@ const Dashboard = () => {
               <h3 className="w-full px-4 py-2 bg-slate-100 border-b-2 border-gray-500">Agencies</h3>
               <div className="w-full flex flex-col items-center mt-4">
                 <AgencyInfo name="Social bits" image="/assets/ag1.webp" timeLeft="30"/>
-                <AgencyInfo name="Lens pro" image="/assets/jpg" timeLeft="7"/>
+                <AgencyInfo name="Lens pro" image="/assets/ag2.jpg" timeLeft="7"/>
               </div>
             </div>
             <div className="w-6/12 sm:w-3/12 my-2 sm:my-0 ml-[25%] sm:ml-0 bg-white self-start pb-4 border-2 border-gray-500 rounded-lg overflow-hidden">
