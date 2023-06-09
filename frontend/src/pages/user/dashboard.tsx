@@ -58,11 +58,8 @@ const Dashboard = () => {
             <div className="w-full sm:w-8/12 bg-white self-start pb-4 border-2 border-gray-500 rounded-lg overflow-hidden">
               <h3 className="w-full px-4 py-2 bg-slate-100 border-b-2 border-gray-500">Agencies</h3>
               <div className="w-full flex flex-col items-center mt-4">
-
-                <AgencyInfo name="RandomAgency" image="/hh" timeLeft="30"/>
-                <AgencyInfo name="RandomAgency" image="/hh" timeLeft="5"/>
-                <AgencyInfo name="RandomAgency" image="/hh" timeLeft="30"/>
-
+                <AgencyInfo name="Social bits" image="https://rdsdigital.in/wp-content/uploads/2022/01/RDS-1-02-212.webp" timeLeft="30"/>
+                <AgencyInfo name="Lens pro" image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNasUijc70TWWihS3Y1VvD_hSk7fUj9uUK6ftc9F1cCboxPGfcDt6SH34-CrGHFUCd5_o&usqp=CAU" timeLeft="7"/>
               </div>
             </div>
             <div className="w-6/12 sm:w-3/12 my-2 sm:my-0 ml-[25%] sm:ml-0 bg-white self-start pb-4 border-2 border-gray-500 rounded-lg overflow-hidden">
@@ -98,7 +95,7 @@ const AgencyInfo = ({image, name, timeLeft}:{image:string, name:string, timeLeft
   return(
     <div className="h-10 sm:h-14 w-11/12 flex justify-between items-center px-4 mb-4 rounded-xl shadow-lg">
       <Image height={50} width={50} src={image} alt="agency" className="h-8 w-8 sm:h-10 sm:w-10 rounded-[50%] bg-black" />
-      <span className="w-5/12 truncate">Random or weird agency name</span>
+      <span className="w-5/12 truncate">{name} Agency</span>
       <progress max={30} value={timeLeft}></progress>
     </div>
   );
