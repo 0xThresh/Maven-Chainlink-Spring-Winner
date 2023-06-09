@@ -39,6 +39,25 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
 
     mapping(uint256 => Deal) public deals;
     uint256 public dealCounter;
+
+    function checkProfilePosts(
+        address _oracle,
+        string memory _jobId,
+        string memory _lensProfileId
+    ) public onlyOwner {
+        Chainlink.Request memory req = buildOperatorRequest(
+            stringToBytes32(_jobId),
+            this.fulfillRequestInfo.selector
+        );
+
+        req.add("profileId", _lensProfileId);
+        req.add("operation", "get-profile");
+        sendOperatorRequestTo(_oracle, req, ORACLE_PAYMENT);
+    }
+
+    function allowAgencyAddress(address _agencyAddress, string memory _agencyName) public {
+        agencyAddress[_agencyAddress] = _agencyName;
+    }
     
     function checkAgency(address _agencyAddress) public view returns(string memory) {
         require(bytes(agencyAddress[_agencyAddress]).length != 0, "Agency does not exist");
@@ -92,21 +111,6 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
     function sendPaymentToClient(address payable _client, uint256 _amount) internal {
         require(address(this).balance >= _amount, "Insufficient balance");
         _client.transfer(_amount);
-    }
-
-    function checkProfilePosts(
-        address _oracle,
-        string memory _jobId,
-        string memory _lensProfileId
-    ) public onlyOwner {
-        Chainlink.Request memory req = buildOperatorRequest(
-            stringToBytes32(_jobId),
-            this.fulfillRequestInfo.selector
-        );
-
-        req.add("profileId", _lensProfileId);
-        req.add("operation", "get-profile");
-        sendOperatorRequestTo(_oracle, req, ORACLE_PAYMENT);
     }
 
     function fulfillRequestInfo(bytes32 _requestId, uint256 _info) 
