@@ -24,13 +24,16 @@ const lensConfig: LensConfig = {
 export default function App({ Component, pageProps }: AppProps) {
 
   return(
-    <WagmiConfig client={client}>
-      <LensProvider config={lensConfig}>
-        <RecoilRoot>
-          <Component {...pageProps} />
-        </RecoilRoot>
-      </LensProvider>
-      
-    </WagmiConfig>);
+    <>
+      <WagmiConfig client={client}>
+        <LensProvider config={lensConfig}>
+          <RecoilRoot>
+            {/*@ts-ignore*/}
+            <Component {...pageProps} />
+          </RecoilRoot>
+        </LensProvider>
+      </WagmiConfig>;
+    </>
+  );
 }
 
