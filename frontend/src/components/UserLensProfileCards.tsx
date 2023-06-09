@@ -7,7 +7,7 @@ const UserLensProfileCards = ({ profileName, isSelected=false }: IUserProfileCar
     <div className={`w- w-28 h-10 border-2 border-slate-800 py-1 px-2 overflow-hidden ${isSelected && "bg-slate-800 text-white"}`}>
       {profileName}
     </div>
-  )
-}
+  );
+};
 
-export default UserLensProfileCards
+export default UserLensProfileCards;

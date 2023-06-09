@@ -1,14 +1,14 @@
 
-import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
-import { polygonMumbai, mainnet, polygon } from 'wagmi/chains'
-import { publicProvider } from 'wagmi/providers/public'
-import { LensProvider, LensConfig, development } from '@lens-protocol/react-web'
-import { bindings as wagmiBindings } from '@lens-protocol/wagmi'
-import { configureChains, createClient, WagmiConfig } from 'wagmi'
-import { RecoilRoot } from 'recoil';
+import "@/styles/globals.css";
+import type { AppProps } from "next/app";
+import { polygonMumbai, mainnet, polygon } from "wagmi/chains";
+import { publicProvider } from "wagmi/providers/public";
+import { LensProvider, LensConfig, development } from "@lens-protocol/react-web";
+import { bindings as wagmiBindings } from "@lens-protocol/wagmi";
+import { configureChains, createClient, WagmiConfig } from "wagmi";
+import { RecoilRoot } from "recoil";
 
-const { provider, webSocketProvider } = configureChains([polygonMumbai, polygon, mainnet], [publicProvider()])
+const { provider, webSocketProvider } = configureChains([polygonMumbai, polygon, mainnet], [publicProvider()]);
 
 const client = createClient({
   autoConnect: true,
@@ -24,13 +24,13 @@ const lensConfig: LensConfig = {
 export default function App({ Component, pageProps }: AppProps) {
 
   return(
-  <WagmiConfig client={client}>
+    <WagmiConfig client={client}>
       <LensProvider config={lensConfig}>
         <RecoilRoot>
           <Component {...pageProps} />
         </RecoilRoot>
       </LensProvider>
       
-  </WagmiConfig>);
+    </WagmiConfig>);
 }
 
