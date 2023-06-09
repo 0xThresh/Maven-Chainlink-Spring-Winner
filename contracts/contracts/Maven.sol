@@ -54,6 +54,10 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
         req.add("operation", "get-profile");
         sendOperatorRequestTo(_oracle, req, ORACLE_PAYMENT);
     }
+
+    function allowAgencyAddress(address _agencyAddress, string memory _agencyName) public {
+        agencyAddress[_agencyAddress] = _agencyName;
+    }
     
     function checkAgency(address _agencyAddress) public view returns(string memory) {
         require(bytes(agencyAddress[_agencyAddress]).length != 0, "Agency does not exist");
