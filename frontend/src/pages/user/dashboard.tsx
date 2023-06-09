@@ -58,8 +58,8 @@ const Dashboard = () => {
             <div className="w-full sm:w-8/12 bg-white self-start pb-4 border-2 border-gray-500 rounded-lg overflow-hidden">
               <h3 className="w-full px-4 py-2 bg-slate-100 border-b-2 border-gray-500">Agencies</h3>
               <div className="w-full flex flex-col items-center mt-4">
-                <AgencyInfo name="Social bits" image="https://rdsdigital.in/wp-content/uploads/2022/01/RDS-1-02-212.webp" timeLeft="30"/>
-                <AgencyInfo name="Lens pro" image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNasUijc70TWWihS3Y1VvD_hSk7fUj9uUK6ftc9F1cCboxPGfcDt6SH34-CrGHFUCd5_o&usqp=CAU" timeLeft="7"/>
+                <AgencyInfo name="Social bits" image="/assets/ag1.webp" timeLeft="30"/>
+                <AgencyInfo name="Lens pro" image="/assets/ag2.jpg" timeLeft="7"/>
               </div>
             </div>
             <div className="w-6/12 sm:w-3/12 my-2 sm:my-0 ml-[25%] sm:ml-0 bg-white self-start pb-4 border-2 border-gray-500 rounded-lg overflow-hidden">
