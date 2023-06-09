@@ -12,15 +12,15 @@ const UserLensProfileCardsWrapper = ({profileList, parentSetter}: IUserProfileCa
   return (
     <div className="flex justify-evenly">
       {profileList.map((profile, index) => 
-      <div key={index} onClick={() => {
-        setSelected(index)
-        parentSetter(index)
-      }} className=" flex-none cursor-pointer">
-        <UserLensProfileCards profileName={profile} isSelected={index === selected} />
-      </div>
+        <div key={index} onClick={() => {
+          setSelected(index);
+          parentSetter(index);
+        }} className=" flex-none cursor-pointer">
+          <UserLensProfileCards profileName={profile} isSelected={index === selected} />
+        </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default UserLensProfileCardsWrapper
+export default UserLensProfileCardsWrapper;

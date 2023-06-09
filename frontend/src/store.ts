@@ -1,11 +1,11 @@
 import { atom } from "recoil";
 
 export const profileHandlesState = atom({
-    key: 'handles',
-    default:[''], 
+  key: "handles",
+  default:[""], 
 });
 
 export const selectedHandleState = atom({
-    key: 'handle',
-    default: 0, 
+  key: "handle",
+  default: 0, 
 });
