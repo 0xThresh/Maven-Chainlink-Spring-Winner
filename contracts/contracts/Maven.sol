@@ -86,7 +86,16 @@ contract Maven is ChainlinkClient, ConfirmedOwner {
         uint256 postsDifference = lastRetrievedInfo - deal.postsBeforeContract;
 
         deal.numberOfAgencyPosts = postsDifference - deal.requiredNumberOfPosts;
-}
+    }
+
+    function fulfillDeal(uint256 _dealId) external {
+        Deal storage deal = deals[_dealId];
+        require(deal.startDeal, "Deal does not exist or not started");
+        require(!deal.isDealCancelled, "Deal is already cancelled");
+
+        deal.isDealCancelled = true;
+        sendPaymentToAgency(_dealId, deal.dealAmount);
+    }
 
     function revokeDeal(uint256 _dealId) external {
         Deal storage deal = deals[_dealId];

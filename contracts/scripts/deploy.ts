@@ -29,6 +29,19 @@ async function main() {
     await maven.checkProfilePosts(ORACLE_ADDRESS, JOB_ID, LENS_PROFILE_ID);
 
     console.log("checkProfilePosts function called successfully");
+
+    // Set allowed agency wallets
+    let merdi = await maven.allowAgencyAddress("0x4bD55f66449d53b1B213Cfdd4A6904874Bc7E577", "merdi");
+    await merdi.wait();
+    console.log("Merdi agency wallet added");
+
+    let yash = await maven.allowAgencyAddress("0x9e267749E478eD528b4A1F40bD600dA5510258Dc", "yash");
+    await yash.wait();
+    console.log("Yash agency wallet added");
+
+    let thresh = await maven.allowAgencyAddress("0xc2b60CfFe4f20b2046C951CDEB459aF897cff571", "thresh");
+    await merdi.wait();
+    console.log("Thresh agency wallet added");
 }
 
 main()
