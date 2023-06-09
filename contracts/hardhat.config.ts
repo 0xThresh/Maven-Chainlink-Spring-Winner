@@ -1,7 +1,10 @@
 require("@nomiclabs/hardhat-ethers");
 
-module.exports = {
-  solidity: "0.8.9",
+const config: HardhatUserConfig = {
+  solidity: "0.8.18",
+  paths: {
+    artifacts:'../frontend/artifacts'
+  }
   networks: {
     mumbai: {
       url: "https://rpc-mumbai.maticvigil.com",
