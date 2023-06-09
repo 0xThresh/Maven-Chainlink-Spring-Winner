@@ -25,11 +25,11 @@ const Signin = () => {
     if(!loading) {
       let profilesHandles:string[] = [];
       profilesData?.forEach((profile) => {
-        profilesHandles.push(profile.handle);
+        profilesHandles.push(profile.handle);  
       });
       setProfiles(profilesHandles);
     }
-  }, [loading, profilesData, setProfiles]);
+  }, [loading]);
 
   return (
     <ScreenWrapper>
