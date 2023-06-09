@@ -1,8 +1,11 @@
-import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox";
+require("@nomiclabs/hardhat-ethers");
 
-const config: HardhatUserConfig = {
-  solidity: "0.8.18",
+module.exports = {
+  solidity: "0.8.9",
+  networks: {
+    mumbai: {
+      url: "https://rpc-mumbai.maticvigil.com",
+      accounts: [`0x${process.env.PRIVATE_KEY}`]
+    }
+  }
 };
-
-export default config;
